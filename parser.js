@@ -1,8 +1,10 @@
 const https = require("https");
 
+// Useful URL to make requests on the Wiktionary API
 const titlesURL = ".wiktionary.org/w/api.php?action=query&list=search&format=json&utf8&srprop=&srsearch=";
 const pagesURL = ".wiktionary.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=";
 
+// Titles of the relevant sections of the article
 const relevantHeaders = ['hyponymes', 'troponymes', 'antonymes', 'synonymes', 'quasi-synonymes'];
 
 const errors = {
@@ -68,13 +70,13 @@ class Parser {
                 content += chunk;
             })
             .on('end', function() {
-                try { // par sécurité
+                try {
                     const pages = JSON.parse(content).query.pages;
                     const page = pages[Object.keys(pages)[0]].revisions[0]['*'];
                     const languages = page.split(/\n==[^=]/);
                     let relevantPage = languages[0];
                     
-                    if (relevantPage.length < 20) {     // We select only the selected language page
+                    if (relevantPage.length < 20) {     // We keep only the selected language page
                         relevantPage = languages[1];
                     }
 
@@ -115,8 +117,7 @@ class Parser {
             }
             
         });
-        // console.log(categories);
-        // return categories;
+
         this.callback({
             word: this.word,
             categories: categories
