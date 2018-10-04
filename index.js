@@ -21,7 +21,7 @@ console.log("j'ecoute sur 8080");
 
  */
 
-monParser = new Parser.parser('âne', 'fr', function(result) {
+monParser = new Parser.parser('entrée', 'fr', function(result) {
 
     console.log(result.categories);
 });
