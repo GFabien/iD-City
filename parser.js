@@ -1,8 +1,11 @@
 const https = require("https");
+const Rx = require('rxjs');
 
 // Useful URL to make requests on the Wiktionary API
 const titlesURL = ".wiktionary.org/w/api.php?action=query&list=search&format=json&utf8&srprop=&srsearch=";
 const pagesURL = ".wiktionary.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=";
+
+const srwhat = 'nearmatch';
 
 // Titles of the relevant sections of the article
 const relevantHeaders = ['hyponymes', 'troponymes', 'antonymes', 'synonymes', 'quasi-synonymes'];
@@ -12,27 +15,13 @@ const errors = {
 	req: "a request has failed"
 }
 
-class Parser {
-    constructor(word, language, callback) {
-        this.language = language;
-        this.word = word;
 
-        this.srwhat = 'nearmatch';
+function getTitle(word, language) {
+    // const self = this; // Keep reference to the object to be able to call it later
+    const url = `https://${language}${titlesURL}${encodeURIComponent(word)}&srwhat=${srwhat}`;
 
-        this.callback = callback;
-    }
+    const obs = Rx.Observable.create(function subscribe(observer) {
 
-    sendError(err, word) {
-        this.callback( {
-            word: word || this.word,
-            err: err
-        });
-    }
-
-    getTitles() {
-        const self = this; // Keep reference to the object to be able to call it later
-
-        const url = `https://${this.language}${titlesURL}${encodeURIComponent(this.word)}&srwhat=${this.srwhat}`;
         const req = https.get(url, function(result) {
             let content = "";
 
@@ -43,12 +32,12 @@ class Parser {
                 try {
                     const articles = JSON.parse(content).query.search;
                     if (articles.length) {
-                        self.getPage(articles[0].title);
+                        observer.next(articles[0].title);
                     }
                 }
                 catch(err) {
                     console.log(err);
-                    self.sendError(err);
+                    observer.error(err);
                 }
                 
                 
@@ -56,14 +45,17 @@ class Parser {
         })
 
         req.on("error", function() { 
-            self.sendError(err); 
+            observer.error("error"); 
         });
-    }
+        
+    });
+    return obs;        
+}
 
-    getPage(title) {
-        const self = this;
+function getPage(title, language) {
+    const url = `https://${language}${pagesURL}${encodeURIComponent(title)}`;
 
-        const url = `https://${this.language}${pagesURL}${encodeURIComponent(title)}`;
+    const obs = Rx.Observable.create(function subscribe(observer) {
         const req = https.get(url, function(result) {
             let content = '';
             result.on('data', function(chunk) {
@@ -84,47 +76,63 @@ class Parser {
 
                     sections.shift();
 
-                    self.parse(relevantPage);
+                    observer.next(relevantPage);
                 }
                 catch(err) {
                     console.log(err);
-                    return self.sendError(errors.req);
+                    observer.error(errors.req);
                 }
             })
         });
 
         req.on("error", function() {
-            this.sendErr(errors.req); 
+            observer.error("error"); 
         });
-    }
+    });
 
-    parse(page) {
-        const sections = page.split('\n====');
-        sections.shift();
+    return obs;        
+}
 
-        const headerPattern = /[^|]+(?=}}\s====\n)/;
-        const wordPattern = /[^[]+(?=]])/g;
+function parse(page, word) {
+    const sections = page.split('\n====');
+    sections.shift();
 
-        const categories = [];
-        sections.forEach(element => {
-            const header = element.match(headerPattern);
-            const words = element.match(wordPattern);
-            if (header && words && relevantHeaders.includes(header[0])) {
-                categories.push({
-                    header: header[0],
-                    words: words
-                });
-            }
-            
-        });
+    const headerPattern = /[^|]+(?=}}\s====\n)/;
+    const wordPattern = /[^[]+(?=]])/g;
 
-        this.callback({
-            word: this.word,
-            categories: categories
-        });
-    }
+    const categories = [];
+    sections.forEach(element => {
+        const header = element.match(headerPattern);
+        const words = element.match(wordPattern);
+        if (header && words && relevantHeaders.includes(header[0])) {
+            categories.push({
+                header: header[0],
+                words: words
+            });
+        }
+        
+    });
+
+    const result = {
+        word: word,
+        categories: categories
+    };
+
+    return result;
+}
+
+function wrapper(word, language) {
+    const obs = Rx.Observable.create(function subscribe(observer) {
+        getTitle(word, language).subscribe((title) => {
+            getPage(title, language).subscribe((page) => {
+                observer.next(parse(page, word));
+            })
+        })
+    });
+    return obs;
 }
 
 
 
-exports.parser = Parser;
+
+module.exports = wrapper;

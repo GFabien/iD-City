@@ -1,4 +1,6 @@
-const Parser = require('./parser');
+const parser = require('./parser');
+const articles = require('./pick-articles');
+const Rx = require('rxjs');
 
 /**
 
@@ -21,8 +23,12 @@ console.log("j'ecoute sur 8080");
 
  */
 
-monParser = new Parser.parser('entrée', 'fr', function(result) {
-
-    console.log(result.categories);
+const obs = parser('entretien', 'fr');
+obs.subscribe((result) => {
+    // console.log(result.categories[0]);
+    const words = result.categories[0].words;
+    words.push('entretien');
+    //console.log(words);
+    console.log(articles(words).length);
 });
-monParser.getTitles();
+
