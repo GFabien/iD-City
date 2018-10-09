@@ -71,11 +71,7 @@ function getPage(title, language) {
                     if (relevantPage.length < 20) {     // We keep only the selected language page
                         relevantPage = languages[1];
                     }
-
-                    const sections = relevantPage.split('\n====');
-
-                    sections.shift();
-
+                    
                     observer.next(relevantPage);
                 }
                 catch(err) {

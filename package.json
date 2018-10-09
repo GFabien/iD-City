@@ -7,7 +7,11 @@
     "test": "test"
   },
   "dependencies": {
+    "chai": "^4.2.0",
+    "chai-rx": "0.0.4",
     "https": "^1.0.0",
+    "nock": "^10.0.1",
+    "rewire": "^4.0.1",
     "rxjs": "^6.3.3",
     "word-definition": "^2.1.6",
     "xml-js": "^1.6.8"
