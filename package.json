@@ -1,0 +1,36 @@
+{
+  "name": "id_city_node_rest_api",
+  "version": "1.0.0",
+  "description": "A node rest api searching for words on the Wiktionary API to choose the most relevant articles from a database and returning them",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "https": "^1.0.0",
+    "rxjs": "^6.3.3",
+    "word-definition": "^2.1.6",
+    "xml-js": "^1.6.8"
+  },
+  "devDependencies": {
+    "mocha": "^5.2.0"
+  },
+  "scripts": {
+    "test": "set TEST=test&& mocha --exit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GFabien/iD-City.git"
+  },
+  "keywords": [
+    "semantic",
+    "research",
+    "wiktionary"
+  ],
+  "author": "Fabien, Erick and Théo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GFabien/iD-City/issues"
+  },
+  "homepage": "https://github.com/GFabien/iD-City#readme"
+}
