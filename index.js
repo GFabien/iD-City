@@ -1,6 +1,6 @@
 const parser = require('./parser');
 const articles = require('./pick-articles');
-const Rx = require('rxjs');
+
 
 /**
 
@@ -29,6 +29,7 @@ obs.subscribe((result) => {
     const words = result.categories[0].words;
     words.push('entretien');
     //console.log(words);
-    console.log(articles(words).length);
+    // console.log(articles(words));
+    arts = articles(words);
 });
 
