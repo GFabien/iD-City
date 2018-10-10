@@ -22,10 +22,10 @@ const options = {
 };
 
 const articles = convert.xml2js(xml, options).datas.data;
+const relevantKeys = ['name', 'topic', 'objective', 'description'];
 
 mod.__set__('articles', articles);
-
-const relevantKeys = ['name', 'topic', 'objective', 'description'];
+mod.__set__('relevantKeys', relevantKeys);
 
 const internal_filter = mod.__get__('internal_filter');
 const filter_articles = mod.__get__('filter_articles');
