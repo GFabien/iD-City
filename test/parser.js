@@ -18,8 +18,6 @@ const getPageResponse = require('./get-page-response');
 // link rewire to the file we want to test
 const mod = rewire('../parser.js');
 
-const titlesUrl = mod.__set__('titlesUrl', ".wiktionary.org/w/api.php?action=query&list=search&format=json&utf8&srprop=&srsearch=");
-
 
 const getTitle = mod.__get__('getTitle');
 const getPage = mod.__get__('getPage');
