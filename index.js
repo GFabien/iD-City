@@ -1,8 +1,9 @@
 const parser = require('./parser');
 const articles = require('./pick-articles');
+const sortArticles = require('./sort-articles');
 
 
-/**
+/*
 
 const http = require('http');
 
@@ -25,11 +26,10 @@ console.log("j'ecoute sur 8080");
 
 const obs = parser('entretien', 'fr');
 obs.subscribe((result) => {
-    // console.log(result.categories[0]);
     const words = result.categories[0].words;
     words.push('entretien');
-    //console.log(words);
-    // console.log(articles(words));
-    arts = articles(words);
+    const arts = articles(words);
+    const relevantIds = sortArticles(arts, words);
+    console.log(relevantIds);
 });
 
