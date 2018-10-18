@@ -30,7 +30,7 @@ describe('Get Title tests', () => {
     beforeEach(() => {
         nock('https://fr.wiktionary.org')
             .get('/w/api.php?action=query&list=search&format=json&utf8&srprop=&srsearch=bonjour&srwhat=nearmatch')
-            .reply(200, getTitleResponse);
+            .reply(200, getTitleResponse[0]);
     });
 
     it('Get a title', (done) => {
@@ -128,17 +128,20 @@ describe('Parse tests', () => {
 describe('Wrapper tests', () => {
     beforeEach(() => {
         nock('https://fr.wiktionary.org')
-            .get('/w/api.php?action=query&list=search&format=json&utf8&srprop=&srsearch=bonjour&srwhat=nearmatch')
-            .reply(200, getTitleResponse);
+            .get('/w/api.php?action=query&list=search&format=json&utf8&srprop=&srsearch=pommes&srwhat=nearmatch')
+            .reply(200, getTitleResponse[1]);
         nock('https://fr.wiktionary.org')
-            .get('/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=bonjour')
-            .reply(200, getPageResponse[0]);
+            .get('/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=pommes')
+            .reply(200, getPageResponse[1]);
+        nock('https://fr.wiktionary.org')
+            .get('/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=pomme')
+            .reply(200, getPageResponse[4]);
     });
 
     it('Wrap all functions', (done) => {
-        wrapper('bonjour', 'fr').subscribe((result) => {
+        wrapper('pommes', 'fr').subscribe((result) => {
             result.should.be.a('Object');
-            result.word.should.equal('bonjour');
+            result.word.should.equal('pomme');
             result.categories.should.be.a('array');
             done();
         });

@@ -1,4 +1,4 @@
-module.exports = {
+module.exports = [{
     "batchcomplete": "",
     "query": {
         "search": [
@@ -9,4 +9,16 @@ module.exports = {
             }
         ]
     }
-}
+},
+{
+    "batchcomplete": "",
+    "query": {
+        "search": [
+            {
+                "ns": 0,
+                "title": "pommes",
+                "pageid": 265608
+            }
+        ]
+    }
+}]

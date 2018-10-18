@@ -79,7 +79,7 @@ function getBetterTitle(title, language) {
                     const isVerb = /{{S\|verbe\|fr\|flexion}}/.exec(page);
                     if (isName && (!isAdjective || isName.index < isAdjective.index) && (!isVerb || isName.index < isVerb.index)) {   // On suppose ici qu'on est en français
                         // Find xxxx in ...|s=xxxx}}
-                        observer.next(/\|s=([a-z]*)}}/.exec(page)[1]);
+                        observer.next(/\|s=([a-z]*)/.exec(page)[1]);
                     }
                     else if (isAdjective && (!isVerb || isAdjective.index < isVerb.index)) {
                         // Find xxxx in [[xxxx#fr-yy|xxxx]]
@@ -194,10 +194,12 @@ function parse(page, word) {
 function wrapper(word, language) {
     const obs = Rx.Observable.create(function subscribe(observer) {
         getTitle(word, language).subscribe((title) => {
-            getPage(title, language).subscribe((page) => {
-                observer.next(parse(page, word));
-            })
-        })
+            getBetterTitle(title, language).subscribe((newTitle) => {
+                getPage(newTitle, language).subscribe((page) => {
+                    observer.next(parse(page, newTitle));
+                });
+            });
+        });
     });
     return obs;
 }
