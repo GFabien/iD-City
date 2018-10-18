@@ -21,4 +21,18 @@ module.exports = [{
             }
         ]
     }
+},
+{
+    "error": {
+        "code": "nosrsearch",
+        "info": "The \"srsearch\" parameter must be set.",
+        "*": "See https://fr.wiktionary.org/w/api.php for API usage. Subscribe to the mediawiki-api-announce mailing list at &lt;https://lists.wikimedia.org/mailman/listinfo/mediawiki-api-announce&gt; for notice of API deprecations and breaking changes."
+    },
+    "servedby": "mw1229"
+},
+{
+    "batchcomplete": "",
+    "query": {
+        "search": []
+    }
 }]
