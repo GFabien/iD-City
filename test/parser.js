@@ -20,6 +20,7 @@ const mod = rewire('../parser.js');
 
 
 const getTitle = mod.__get__('getTitle');
+const getBetterTitle = mod.__get__('getBetterTitle');
 const getPage = mod.__get__('getPage');
 const parse = mod.__get__('parse');
 const wrapper = mod.__get__('wrapper');
@@ -42,11 +43,58 @@ describe('Get Title tests', () => {
     });
 });
 
+describe('Get Better Title tests', () => {
+    before(() => {
+        nock('https://fr.wiktionary.org')
+            .get('/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=pommes')
+            .reply(200, getPageResponse[1]);
+    });
+
+    it('Get the name if we give the plural', (done) => {
+        getBetterTitle('pommes', 'fr').subscribe((result) => {
+            result.should.be.a('string');
+            result.should.equal('pomme');
+            done();
+        });
+    });
+    
+    
+    before(() => {
+        nock('https://fr.wiktionary.org')
+            .get('/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=attentifs')
+            .reply(200, getPageResponse[2]);
+    });
+
+    it('Get the adjective if we give the plural', (done) => {
+        getBetterTitle('attentifs', 'fr').subscribe((result) => {
+            result.should.be.a('string');
+            result.should.equal('attentif');
+            done();
+        });
+    });
+
+    
+    before(() => {
+        nock('https://fr.wiktionary.org')
+            .get('/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=descendons')
+            .reply(200, getPageResponse[3]);
+    });
+    
+    it('Get the verb if we give a conjugated form', (done) => {
+        getBetterTitle('descendons', 'fr').subscribe((result) => {
+            result.should.be.a('string');
+            result.should.equal('descendre');
+            done();
+        });
+    });
+    
+});
+
 describe('Get Page tests', () => {
     beforeEach(() => {
         nock('https://fr.wiktionary.org')
             .get('/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=bonjour')
-            .reply(200, getPageResponse);
+            .reply(200, getPageResponse[0]);
     });
 
     it('Get a page', (done) => {
@@ -63,7 +111,7 @@ describe('Parse tests', () => {
     beforeEach(() => {
         nock('https://fr.wiktionary.org')
             .get('/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=bonjour')
-            .reply(200, getPageResponse);
+            .reply(200, getPageResponse[0]);
     });
 
     it('Parse the page', (done) => {
@@ -84,7 +132,7 @@ describe('Wrapper tests', () => {
             .reply(200, getTitleResponse);
         nock('https://fr.wiktionary.org')
             .get('/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=bonjour')
-            .reply(200, getPageResponse);
+            .reply(200, getPageResponse[0]);
     });
 
     it('Wrap all functions', (done) => {

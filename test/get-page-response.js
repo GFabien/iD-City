@@ -1,4 +1,4 @@
-module.exports = {
+module.exports = [{
     "batchcomplete": "",
     "warnings": {
         "main": {
@@ -24,4 +24,85 @@ module.exports = {
             }
         }
     }
-}
+},
+{
+    "batchcomplete": "",
+    "warnings": {
+        "main": {
+            "*": "Subscribe to the mediawiki-api-announce mailing list at <https://lists.wikimedia.org/mailman/listinfo/mediawiki-api-announce> for notice of API deprecations and breaking changes. Use [[Special:ApiFeatureUsage]] to see usage of deprecated features by your application."
+        },
+        "revisions": {
+            "*": "Because \"rvslots\" was not specified, a legacy format has been used for the output. This format is deprecated, and in the future the new format will always be used."
+        }
+    },
+    "query": {
+        "pages": {
+            "265608": {
+                "pageid": 265608,
+                "ns": 0,
+                "title": "pommes",
+                "revisions": [
+                    {
+                        "contentformat": "text/x-wiki",
+                        "contentmodel": "wikitext",
+                        "*": "{{voir|pommés}}\n\n== {{langue|fr}} ==\n=== {{S|nom|fr|flexion}} ===\n{{fr-rég|pɔm|s=pomme}}\n'''pommes''' {{pron|pɔm|fr}} {{f}}\n# ''Pluriel de'' [[pomme#fr-nom|pomme]].\n#* ''Vétérans chevronnés de la guerre des boutons, grands maraudeurs de '''pommes''' et abatteurs de noix, tous, garnements de dix à douze ans, nous avions ce printemps-là reformé notre association de bandits grimpeurs, pillards aériens et détrousseurs de nids.'' {{source|Louis Pergaud, ''La Traque aux nids'', dans ''Les Rustiques, nouvelles villageoises'', 1921}}\n\n=== {{S|adjectif|fr|flexion}} ===\n{{fr-rég|pɔm|s=pomme}}\n'''pommes''' {{pron|pɔm|fr}} {{f}}\n# ''Pluriel de'' [[pomme#fr-adj-2|pomme]].\n\n=== {{S|verbe|fr|flexion}} ===\n{{fr-verbe-flexion|pommer|ind.p.2s=oui|sub.p.2s=oui}}\n'''pommes''' {{pron|pɔm|fr}}\n# ''Deuxième personne du singulier de l’indicatif présent du verbe'' [[pommer]].\n# ''Deuxième personne du singulier du subjonctif présent du verbe'' [[pommer]]."
+                    }
+                ]
+            }
+        }
+    }
+},
+{
+    "batchcomplete": "",
+    "warnings": {
+        "main": {
+            "*": "Subscribe to the mediawiki-api-announce mailing list at <https://lists.wikimedia.org/mailman/listinfo/mediawiki-api-announce> for notice of API deprecations and breaking changes. Use [[Special:ApiFeatureUsage]] to see usage of deprecated features by your application."
+        },
+        "revisions": {
+            "*": "Because \"rvslots\" was not specified, a legacy format has been used for the output. This format is deprecated, and in the future the new format will always be used."
+        }
+    },
+    "query": {
+        "pages": {
+            "330900": {
+                "pageid": 330900,
+                "ns": 0,
+                "title": "attentifs",
+                "revisions": [
+                    {
+                        "contentformat": "text/x-wiki",
+                        "contentmodel": "wikitext",
+                        "*": "== {{langue|fr}} ==\n=== {{S|adjectif|fr|flexion}} ===\n{{fr-accord-f|attenti|a.tɑ̃.ti}}\n'''attentifs''' {{pron|a.tɑ̃.tif|fr}}\n# ''Masculin pluriel de'' [[attentif#fr|attentif]].\n\n=== {{S|anagrammes}} ===\n* [[tentatifs]] {{cf|tentatif}}"
+                    }
+                ]
+            }
+        }
+    }
+},
+{
+    "batchcomplete": "",
+    "warnings": {
+        "main": {
+            "*": "Subscribe to the mediawiki-api-announce mailing list at <https://lists.wikimedia.org/mailman/listinfo/mediawiki-api-announce> for notice of API deprecations and breaking changes. Use [[Special:ApiFeatureUsage]] to see usage of deprecated features by your application."
+        },
+        "revisions": {
+            "*": "Because \"rvslots\" was not specified, a legacy format has been used for the output. This format is deprecated, and in the future the new format will always be used."
+        }
+    },
+    "query": {
+        "pages": {
+            "305670": {
+                "pageid": 305670,
+                "ns": 0,
+                "title": "descendons",
+                "revisions": [
+                    {
+                        "contentformat": "text/x-wiki",
+                        "contentmodel": "wikitext",
+                        "*": "== {{langue|fr}} ==\n=== {{S|verbe|fr|flexion}} ===\n{{fr-verbe-flexion|grp=3|descendre|ind.p.1p=oui|imp.p.1p=oui}}\n'''descendons''' {{pron|dɛ.sɑ̃.dɔ̃|fr}}\n# ''Première personne du pluriel de l’indicatif présent de'' [[descendre]].\n# ''Première personne du pluriel de l’impératif de'' [[descendre]]."
+                    }
+                ]
+            }
+        }
+    }
+}]

@@ -98,13 +98,13 @@
 
         
             
-<h4 class="name" id="keys"><span class="type-signature">(constant) </span>keys<span class="type-signature"></span></h4>
+<h4 class="name" id="https"><span class="type-signature">(constant) </span>https<span class="type-signature"></span></h4>
 
 
 
 
 <div class="description">
-    This file aims to provide functions to sort articles according to their relevance.
+    This file aims to make requests on Wiktionary thanks to the Wikimedia API to get words related to the one we received on the server.
 </div>
 
 
@@ -142,7 +142,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sort-articles.js.html">sort-articles.js</a>, <a href="sort-articles.js.html#line5">line 5</a>
+        <a href="parser.js.html">parser.js</a>, <a href="parser.js.html#line5">line 5</a>
     </li></ul></dd>
     
 
@@ -170,7 +170,7 @@
     
 
     
-    <h4 class="name" id="getMostRelevantIds"><span class="type-signature"></span>getMostRelevantIds<span class="signature">(articles, words)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="getBetterTitle"><span class="type-signature"></span>getBetterTitle<span class="signature">(word, language)</span><span class="type-signature"> &rarr; {Observable}</span></h4>
     
 
     
@@ -178,7 +178,7 @@
 
 
 <div class="description">
-    Public function that returns the ids of the most relevant articles.
+    Private function to get a better title for the page we are interested in given a specific word and a specific language.
 </div>
 
 
@@ -214,527 +214,7 @@
 
         <tr>
             
-                <td class="name"><code>articles</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The articles have.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>words</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The words we want to have in the articles.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sort-articles.js.html">sort-articles.js</a>, <a href="sort-articles.js.html#line71">line 71</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="sortArticles"><span class="type-signature"></span>sortArticles<span class="signature">(articles, words)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Private function that sorts the articles according to their weights.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>articles</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The articles we are sorting.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>words</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The words we want to have in the articles.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sort-articles.js.html">sort-articles.js</a>, <a href="sort-articles.js.html#line61">line 61</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="totalWeight"><span class="type-signature"></span>totalWeight<span class="signature">(article, words)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Private function that returns the weight of an article given an array of words we want to be in the article.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>article</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The article we are evaluating.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>words</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The words we want to have in the article.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sort-articles.js.html">sort-articles.js</a>, <a href="sort-articles.js.html#line24">line 24</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="weightByKey"><span class="type-signature"></span>weightByKey<span class="signature">(article, words, key)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Private function that returns the weight of an article given an array of words we want to be in an article's specific section.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>article</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The article we are evaluating.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>words</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The words we want to have in the article.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>key</code></td>
+                <td class="name"><code>word</code></td>
             
 
             <td class="type">
@@ -750,7 +230,30 @@
 
             
 
-            <td class="description last">The section we look into.</td>
+            <td class="description last">The word we want to find semantic correspondance with.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>language</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The language we want to search in.</td>
         </tr>
 
     
@@ -791,7 +294,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sort-articles.js.html">sort-articles.js</a>, <a href="sort-articles.js.html#line35">line 35</a>
+        <a href="parser.js.html">parser.js</a>, <a href="parser.js.html#line64">line 64</a>
     </li></ul></dd>
     
 
@@ -814,6 +317,28 @@
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    - An observable on which we can subscribe to get the page we want.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Observable</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -825,7 +350,7 @@
     
 
     
-    <h4 class="name" id="wordImportance"><span class="type-signature"></span>wordImportance<span class="signature">(article, word, key)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="getPage"><span class="type-signature"></span>getPage<span class="signature">(title, language)</span><span class="type-signature"> &rarr; {Observable}</span></h4>
     
 
     
@@ -833,7 +358,7 @@
 
 
 <div class="description">
-    Private function that returns the weight of an article given one word we want to be in an article's specific section.
+    Private function to get the content of the page once we have its title and language.
 </div>
 
 
@@ -869,13 +394,13 @@
 
         <tr>
             
-                <td class="name"><code>article</code></td>
+                <td class="name"><code>title</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Object</span>
+<span class="param-type">string</span>
 
 
             
@@ -885,7 +410,367 @@
 
             
 
-            <td class="description last">The article we are evaluating.</td>
+            <td class="description last">The title of the page we are intersted in.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>language</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The language we want to search in.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="parser.js.html">parser.js</a>, <a href="parser.js.html#line118">line 118</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    - An observable on which we can subscribe to get the page we want.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Observable</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getTitle"><span class="type-signature"></span>getTitle<span class="signature">(word, language)</span><span class="type-signature"> &rarr; {Observable}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Private function to get the title of the page we are interested in given a specific word and a specific language.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>word</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The word we want to find semantic correspondance with.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>language</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The language we want to search in.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="parser.js.html">parser.js</a>, <a href="parser.js.html#line28">line 28</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    - An observable on which we can subscribe to get the page we want.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Observable</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="parse"><span class="type-signature"></span>parse<span class="signature">(page, word)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Private function to parse the content of the page we got to turn it into a javascript object.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>page</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The page we got and we want to parse.</td>
         </tr>
 
     
@@ -908,30 +793,7 @@
 
             
 
-            <td class="description last">The word we want to have in the article.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>key</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The section we look into.</td>
+            <td class="description last">The word we want to find semantic correspondance with.</td>
         </tr>
 
     
@@ -972,7 +834,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sort-articles.js.html">sort-articles.js</a>, <a href="sort-articles.js.html#line46">line 46</a>
+        <a href="parser.js.html">parser.js</a>, <a href="parser.js.html#line160">line 160</a>
     </li></ul></dd>
     
 
@@ -995,6 +857,208 @@
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    - An object with attributes word and categories. Word is the word we gave to the function and categories are arrays that contain objects with attributes header and words. This array might be empty.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="wrapper"><span class="type-signature"></span>wrapper<span class="signature">(word, language)</span><span class="type-signature"> &rarr; {Observable}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Public function to wrap all precedent functions and return an Observable we just have to subscribe to get the results we want.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>word</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The word we want to find semantic correspondance with.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>language</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The language we want to search in.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="parser.js.html">parser.js</a>, <a href="parser.js.html#line194">line 194</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    - An observable on which we can subscribe to get the output of the parse function.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Observable</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -1016,13 +1080,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#getMostRelevantIds">getMostRelevantIds</a></li><li><a href="global.html#keys">keys</a></li><li><a href="global.html#sortArticles">sortArticles</a></li><li><a href="global.html#totalWeight">totalWeight</a></li><li><a href="global.html#weightByKey">weightByKey</a></li><li><a href="global.html#wordImportance">wordImportance</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#getBetterTitle">getBetterTitle</a></li><li><a href="global.html#getPage">getPage</a></li><li><a href="global.html#getTitle">getTitle</a></li><li><a href="global.html#https">https</a></li><li><a href="global.html#parse">parse</a></li><li><a href="global.html#wrapper">wrapper</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Oct 11 2018 16:20:15 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Oct 18 2018 09:41:22 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

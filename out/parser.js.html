@@ -47,9 +47,11 @@ const errors = {
 	req: "a request has failed"
 }
 
+
 /** Private function to get the title of the page we are interested in given a specific word and a specific language.
  * @param {string} word - The word we want to find semantic correspondance with.
  * @param {string} language - The language we want to search in.
+ * @return {Observable} - An observable on which we can subscribe to get the page we want.
  */
 function getTitle(word, language) {
     const url = `https://${language}${titlesURL}${encodeURIComponent(word)}&amp;srwhat=${srwhat}`;
@@ -82,9 +84,64 @@ function getTitle(word, language) {
     return obs;        
 }
 
+/** Private function to get a better title for the page we are interested in given a specific word and a specific language.
+ * @param {string} word - The word we want to find semantic correspondance with.
+ * @param {string} language - The language we want to search in.
+ * @return {Observable} - An observable on which we can subscribe to get the page we want.
+ */
+function getBetterTitle(title, language) {
+    const url = `https://${language}${pagesURL}${encodeURIComponent(title)}`;
+
+    const obs = Rx.Observable.create(function subscribe(observer) {
+        const req = https.get(url, function(result) {
+            let content = '';
+            result.on('data', function(chunk) {
+                content += chunk;
+            })
+            .on('end', function() {
+                try {
+                    const pages = JSON.parse(content).query.pages;
+                    const page = pages[Object.keys(pages)[0]].revisions[0]['*'];
+                    const isName = /{{S\|nom\|fr\|flexion}}/.exec(page);
+                    const isAdjective = /{{S\|adjectif\|fr\|flexion}}/.exec(page);
+                    const isVerb = /{{S\|verbe\|fr\|flexion}}/.exec(page);
+                    if (isName &amp;&amp; (!isAdjective || isName.index &lt; isAdjective.index) &amp;&amp; (!isVerb || isName.index &lt; isVerb.index)) {   // On suppose ici qu'on est en français
+                        // Find xxxx in ...|s=xxxx}}
+                        observer.next(/\|s=([a-z]*)}}/.exec(page)[1]);
+                    }
+                    else if (isAdjective &amp;&amp; (!isVerb || isAdjective.index &lt; isVerb.index)) {
+                        // Find xxxx in [[xxxx#fr-yy|xxxx]]
+                        observer.next(/\[\[([a-z]*)/.exec(page)[1]);
+                    }
+                    else if (isVerb) {
+                        // Find xxxx in {{fr-verbe-flexion|(grp=3)|xxxx|
+                        observer.next(/{{fr-verbe-flexion\|(grp=3\|)?([a-z]*)\|/.exec(page)[2]);
+                    }
+                    else {
+                        observer.next(title);
+                    }
+
+                }
+                catch(err) {
+                    console.log(err);
+                    observer.error(errors.req);
+                }
+            })
+        });
+
+        req.on("error", function() {
+            observer.error("error"); 
+        });
+    });
+
+    return obs;        
+}
+
+
 /** Private function to get the content of the page once we have its title and language.
  * @param {string} title - The title of the page we are intersted in.
  * @param {string} language - The language we want to search in.
+ * @return {Observable} - An observable on which we can subscribe to get the page we want.
  */
 function getPage(title, language) {
     const url = `https://${language}${pagesURL}${encodeURIComponent(title)}`;
@@ -126,6 +183,7 @@ function getPage(title, language) {
 /** Private function to parse the content of the page we got to turn it into a javascript object.
  * @param {string} page - The page we got and we want to parse.
  * @param {string} word - The word we want to find semantic correspondance with.
+ * @return {Object} - An object with attributes word and categories. Word is the word we gave to the function and categories are arrays that contain objects with attributes header and words. This array might be empty.
  */
 function parse(page, word) {
     const sections = page.split('\n====');
@@ -159,6 +217,7 @@ function parse(page, word) {
 /** Public function to wrap all precedent functions and return an Observable we just have to subscribe to get the results we want.
  * @param {string} word - The word we want to find semantic correspondance with.
  * @param {string} language - The language we want to search in.
+ * @return {Observable} - An observable on which we can subscribe to get the output of the parse function.
  */
 function wrapper(word, language) {
     const obs = Rx.Observable.create(function subscribe(observer) {
@@ -181,13 +240,13 @@ module.exports = wrapper;</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#getPage">getPage</a></li><li><a href="global.html#getTitle">getTitle</a></li><li><a href="global.html#https">https</a></li><li><a href="global.html#parse">parse</a></li><li><a href="global.html#wrapper">wrapper</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#getBetterTitle">getBetterTitle</a></li><li><a href="global.html#getPage">getPage</a></li><li><a href="global.html#getTitle">getTitle</a></li><li><a href="global.html#https">https</a></li><li><a href="global.html#parse">parse</a></li><li><a href="global.html#wrapper">wrapper</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Oct 11 2018 13:53:47 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Oct 18 2018 09:41:22 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>
