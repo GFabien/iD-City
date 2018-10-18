@@ -26,14 +26,14 @@ router.get('/', function(req, res, next) {
     const obs = parser(list_req_words[0], 'fr');
     obs.subscribe((result) => {
         const words = result.categories[0].words;
-        words.push('entretien');
+        words.push(list_req_words[0]);
         
         //search articles containing the word or synonym
         const arts = articles(words);
         const relevantIds = sortArticles(arts, words);
 
         //send relevant ids
-        var json_relevantIds={'id': relevantIds}
+        var json_relevantIds={'ids': relevantIds}
         res.status(HttpStatus.OK).send(json_relevantIds);  
         console.log(relevantIds);
     });
