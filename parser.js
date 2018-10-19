@@ -163,15 +163,13 @@ function parse(page, word) {
     const headerPattern = /[^|]+(?=}}\s====\n)/;
     const wordPattern = /[^[]+(?=]])/g;
 
-    const categories = [];
+    const categories = {};
     sections.forEach(element => {
         const header = element.match(headerPattern);
         const words = element.match(wordPattern);
         if (header && words && relevantHeaders.includes(header[0])) {
-            categories.push({
-                header: header[0],
-                words: words
-            });
+            //choose categorie will have the following form: {{synonym: list of words},{troponyme:list of words}}
+            categories[header[0]]=words;
         }
         
     });
