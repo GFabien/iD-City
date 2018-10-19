@@ -26,10 +26,12 @@ console.log("j'ecoute sur 8080");
 
 const obs = parser('entretien', 'fr');
 obs.subscribe((result) => {
-    const words = result.categories[0].words;
+    const words = result.categories.synonymes;
     words.push('entretien');
+    /*
     const arts = articles(words);
     const relevantIds = sortArticles(arts, words);
-    console.log(relevantIds);
+    */
+    console.log(words);
 });
 
