@@ -25,7 +25,9 @@ router.get('/', function(req, res, next) {
     //get similar words 
     const obs = parser(list_req_words[0], 'fr');
     obs.subscribe((result) => {
-        const words = result.categories[0].words;
+        if (typeof result.categories !== 'undefined' && result.categories.length > 0) {
+            const words = result.categories[0].words;
+        }
         words.push(list_req_words[0]);
         
         //search articles containing the word or synonym
