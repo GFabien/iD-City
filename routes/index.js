@@ -25,19 +25,16 @@ router.get('/', function(req, res, next) {
     //get similar words 
     const obs = parser(list_req_words[0], 'fr');
     obs.subscribe((result) => {
+        let words=[]
         if (typeof result.categories !== 'undefined' && result.categories.length > 0) {
-            const words = result.categories[0].words;
+            words = result.categories[0].words;
         }
         words.push(list_req_words[0]);
         
-        //search articles containing the word or synonym
-        const arts = articles(words);
-        const relevantIds = sortArticles(arts, words);
-
-        //send relevant ids
-        var json_relevantIds={'ids': relevantIds}
-        res.status(HttpStatus.OK).send(json_relevantIds);  
-        console.log(relevantIds);
+        //send relevant words
+        var json_relevantWords={'relevantWords': words}
+        res.status(HttpStatus.OK).send(json_relevantWords);  
+        console.log(words);
     });
 
 });
