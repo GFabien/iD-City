@@ -27,7 +27,7 @@ const wrapper = mod.__get__('wrapper');
 
 
 describe('Get Title tests', () => {
-    beforeEach(() => {
+    before(() => {
         nock('https://fr.wiktionary.org')
             .get('/w/api.php?action=query&list=search&format=json&utf8&srprop=&srsearch=bonjour&srwhat=nearmatch')
             .reply(200, getTitleResponse[0]);
@@ -38,6 +38,34 @@ describe('Get Title tests', () => {
             result.should.be.a('string');
 
             result.should.equal('bonjour');
+            done();
+        });
+    });
+
+    before(() => {
+        nock('https://fr.wiktionary.org')
+            .get('/w/api.php?action=query&list=search&format=json&utf8&srprop=&srsearch=&srwhat=nearmatch')
+            .reply(200, getTitleResponse[2]);
+    });
+
+    it('Throws an error if we give an empty word', (done) => {
+        getTitle('', 'fr').subscribe(() => {},
+        (err) => {
+            err.should.be.an('error');
+            done();
+        });
+    });
+
+    before(() => {
+        nock('https://fr.wiktionary.org')
+            .get('/w/api.php?action=query&list=search&format=json&utf8&srprop=&srsearch=écologié&srwhat=nearmatch')
+            .reply(200, getTitleResponse[3]);
+    });
+
+    it('Throws an error if we give a word that does not exist', (done) => {
+        getTitle('écologié', 'fr').subscribe(() => {},
+        (err) => {
+            err.should.be.an('error');
             done();
         });
     });
