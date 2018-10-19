@@ -216,4 +216,4 @@ function wrapper(word, language) {
     return obs;
 }
 
-module.exports = wrapper;
+//module.exports = wrapper;
