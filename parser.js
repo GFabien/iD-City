@@ -44,13 +44,12 @@ function getTitle(word, language) {
                     }
                 }
                 catch(err) {
-                    console.log(err);
                     observer.error(err);
                 }
-            })
-        })
+            });
+        });
         req.on("error", function() { 
-            observer.error("error"); 
+            observer.error(Error("error"));
         });
     });
     return obs;        
@@ -102,7 +101,7 @@ function getBetterTitle(title, language) {
         });
 
         req.on("error", function() {
-            observer.error("error"); 
+            observer.error(Error("error"));
         });
     });
 
@@ -145,7 +144,7 @@ function getPage(title, language) {
         });
 
         req.on("error", function() {
-            observer.error("error"); 
+            observer.error(Error("error")); 
         });
     });
 
@@ -164,15 +163,13 @@ function parse(page, word) {
     const headerPattern = /[^|]+(?=}}\s====\n)/;
     const wordPattern = /[^[]+(?=]])/g;
 
-    const categories = [];
+    const categories = {};
     sections.forEach(element => {
         const header = element.match(headerPattern);
         const words = element.match(wordPattern);
         if (header && words && relevantHeaders.includes(header[0])) {
-            categories.push({
-                header: header[0],
-                words: words
-            });
+            //choose categorie will have the following form: {{synonym: list of words},{troponyme:list of words}}
+            categories[header[0]]=words;
         }
         
     });
@@ -192,13 +189,26 @@ function parse(page, word) {
  * @return {Observable} - An observable on which we can subscribe to get the output of the parse function.
  */
 function wrapper(word, language) {
+    const defaultResult = {
+        word: word,
+        categories: []
+    }
     const obs = Rx.Observable.create(function subscribe(observer) {
         getTitle(word, language).subscribe((title) => {
             getBetterTitle(title, language).subscribe((newTitle) => {
                 getPage(newTitle, language).subscribe((page) => {
                     observer.next(parse(page, newTitle));
+                },
+                () => {
+                    observer.next(defaultResult);
                 });
+            },
+            () => {
+                observer.next(defaultResult);
             });
+        },
+        (err) => {
+            observer.next(defaultResult);
         });
     });
     return obs;
