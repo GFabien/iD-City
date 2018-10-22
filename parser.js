@@ -168,7 +168,7 @@ function parse(page, word) {
         const header = element.match(headerPattern);
         const words = element.match(wordPattern);
         if (header && words && relevantHeaders.includes(header[0])) {
-            //choose categorie will have the following form: {{synonym: list of words},{troponyme:list of words}}
+            //choose categorie will have the following form: {{synonymes: list of words},{troponyme:list of words}}
             categories[header[0]]=words;
         }
         

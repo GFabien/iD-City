@@ -26,8 +26,8 @@ router.get('/', function(req, res, next) {
     const obs = parser(list_req_words[0], 'fr');
     obs.subscribe((result) => {
         let words=[]
-        if (typeof result.categories !== 'undefined' && result.categories.length > 0) {
-            words = result.categories[0].words;
+        if (typeof result.categories.synonymes !== 'undefined' && result.categories.synonymes.length > 0) {
+            words = result.categories.synonymes;
         }
         words.push(list_req_words[0]);
         
@@ -40,9 +40,25 @@ router.get('/', function(req, res, next) {
 });
   
 //POST entry form 
-    router.post('/', function(req, res, next) {
-    console.log("element1 "+req.body.element1)
-    res.status(HttpStatus.OK).send(req.body);  
+router.post('/', function(req, res, next) {
+    //get request words
+    const req_words = req.body.words;
+    const list_req_words=req_words.split('|');
+
+    //get similar words 
+    const obs = parser(list_req_words[0], 'fr');
+    obs.subscribe((result) => {
+        let words=[]
+        if (typeof result.categories.synonymes !== 'undefined' && result.categories.synonymes.length > 0) {
+            words = result.categories.synonymes;
+        }
+        words.push(list_req_words[0]);
+        
+        //send relevant words
+        var json_relevantWords={'relevantWords': words}
+        res.status(HttpStatus.OK).send(json_relevantWords);  
+        console.log(words);
+    });
 });
 
   
