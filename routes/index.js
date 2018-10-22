@@ -2,6 +2,8 @@ const parser = require('../parser');
 const articles = require('../pick-articles');
 const sortArticles = require('../sort-articles');
 var express = require('express');
+const Rx = require('rxjs');
+const { expand,take } = require('rxjs/operators');
 const HttpStatus = require('http-status-codes');
 var router = express.Router();
 
@@ -38,7 +40,7 @@ router.get('/', function(req, res, next) {
     });
 
 });
-  
+/*
 //POST entry form 
 router.post('/', function(req, res, next) {
     //get request words
@@ -60,6 +62,38 @@ router.post('/', function(req, res, next) {
         console.log(words);
     });
 });
+*/
+
+//POST entry form 
+router.post('/', function(req, res, next) {
+    //get request words
+    const raw_req_words = req.body.words;
+    const list_req_words=raw_req_words.split('|');
+    //get similar words
+    const finalResult = [];
+    Rx  .from(list_req_words)
+        .pipe(expand(function(word){ 
+            return(parser(word, 'fr')); //relevant words {word:..., categorie:{synonymes : ...,troponymes : ...}}
+            }),
+            take(list_req_words.length*2) //number of repetitions before completion
+            )
+        .subscribe(
+            function (x) {
+                finalResult.push(x);
+                console.log('Next: ' , finalResult);
+            },
+            function (err) {
+                console.log('Error: ' + err);   
+            },
+            function () {//send relevant words when completed
+                finalResult.splice(0,list_req_words.length);
+                console.log('Completed');
+                console.log(finalResult)   
+                res.status(HttpStatus.OK).send(finalResult);  
+            });
+});
+
+
 
   
 module.exports = router;
