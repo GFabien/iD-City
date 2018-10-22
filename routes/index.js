@@ -4,6 +4,7 @@ const sortArticles = require('../sort-articles');
 var express = require('express');
 const Rx = require('rxjs');
 const { expand,take } = require('rxjs/operators');
+sw = require('stopword');
 const HttpStatus = require('http-status-codes');
 var router = express.Router();
 
@@ -68,7 +69,8 @@ router.post('/', function(req, res, next) {
 router.post('/', function(req, res, next) {
     //get request words
     const raw_req_words = req.body.words;
-    const list_req_words=raw_req_words.split('|');
+    const split_character='|';
+    const list_req_words=sw.removeStopwords(raw_req_words.split(split_character),sw.fr); //remove useless words
     //get similar words
     const finalResult = [];
     Rx  .from(list_req_words)
