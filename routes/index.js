@@ -70,7 +70,12 @@ router.post('/', function(req, res, next) {
     //get request words
     const raw_req_words = req.body.words;
     const split_character='|';
-    const list_req_words=sw.removeStopwords(raw_req_words.split(split_character),sw.fr); //remove useless words
+    const list_raw_req_words=raw_req_words.split(split_character)
+    let list_req_words=sw.removeStopwords(list_raw_req_words,sw.fr); //remove useless words
+    list_req_words=list_req_words.filter(function(elem, index, self) { //remove repeated words
+        return index === self.indexOf(elem);
+    })
+    
     //get similar words
     const finalResult = [];
     Rx  .from(list_req_words)

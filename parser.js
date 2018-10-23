@@ -73,23 +73,29 @@ function getBetterTitle(title, language) {
                 try {
                     const pages = JSON.parse(content).query.pages;
                     const page = pages[Object.keys(pages)[0]].revisions[0]['*'];
-                    const isName = /{{S\|nom\|fr\|flexion}}/.exec(page);
-                    const isAdjective = /{{S\|adjectif\|fr\|flexion}}/.exec(page);
-                    const isVerb = /{{S\|verbe\|fr\|flexion}}/.exec(page);
-                    if (isName && (!isAdjective || isName.index < isAdjective.index) && (!isVerb || isName.index < isVerb.index)) {   // On suppose ici qu'on est en français
-                        // Find xxxx in ...|s=xxxx}}
-                        observer.next(/\|s=([a-z]*)/.exec(page)[1]);
-                    }
-                    else if (isAdjective && (!isVerb || isAdjective.index < isVerb.index)) {
-                        // Find xxxx in [[xxxx#fr-yy|xxxx]]
-                        observer.next(/\[\[([a-z]*)/.exec(page)[1]);
-                    }
-                    else if (isVerb) {
-                        // Find xxxx in {{fr-verbe-flexion|(grp=3)|xxxx|
-                        observer.next(/{{fr-verbe-flexion\|(grp=3\|)?([a-z]*)\|/.exec(page)[2]);
-                    }
-                    else {
+                    const isOk=/{{S\|synonymes}}/.exec(page);
+                    if(isOk){
                         observer.next(title);
+                    }
+                    else{
+                        const isName = /{{S\|nom\|fr\|flexion}}/.exec(page);
+                        const isAdjective = /{{S\|adjectif\|fr\|flexion}}/.exec(page);
+                        const isVerb = /{{S\|verbe\|fr\|flexion}}/.exec(page);
+                        if (isName && (!isAdjective || isName.index < isAdjective.index) && (!isVerb || isName.index < isVerb.index)) {   // On suppose ici qu'on est en français
+                            // Find xxxx in ...|s=xxxx}}
+                            observer.next(/\|s=([a-z]*)/.exec(page)[1]);
+                        }
+                        else if (isAdjective && (!isVerb || isAdjective.index < isVerb.index)) {
+                            // Find xxxx in [[xxxx#fr-yy|xxxx]]
+                            observer.next(/\[\[([a-z]*)/.exec(page)[1]);
+                        }
+                        else if (isVerb) {
+                            // Find xxxx in {{fr-verbe-flexion|(grp=3)|xxxx|
+                            observer.next(/{{fr-verbe-flexion\|(grp=3\|)?([a-z]*)\|/.exec(page)[2]);
+                        }
+                        else {
+                            observer.next(title);
+                        }
                     }
 
                 }
