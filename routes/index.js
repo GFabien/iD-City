@@ -91,7 +91,7 @@ router.post('/', function(req, res, next) {
                 finalResult.splice(0,list_req_words.length);
                 console.log('Completed');
                 console.log(finalResult)   
-                res.status(HttpStatus.OK).send(finalResult);  
+                res.status(HttpStatus.OK).send({relevantWords: finalResult});  
             });
 });
 
