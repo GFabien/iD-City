@@ -82,6 +82,8 @@ describe('Get Better Title tests', () => {
         getBetterTitle('pommes', 'fr').subscribe((result) => {
             result.should.be.a('string');
             result.should.equal('pomme');
+            console.log('original word: pommes');
+            console.log('new word: ', result);
             done();
         });
     });
@@ -97,6 +99,8 @@ describe('Get Better Title tests', () => {
         getBetterTitle('attentifs', 'fr').subscribe((result) => {
             result.should.be.a('string');
             result.should.equal('attentif');
+            console.log('original word: attentifs');
+            console.log('new word: ', result);
             done();
         });
     });
@@ -112,6 +116,8 @@ describe('Get Better Title tests', () => {
         getBetterTitle('descendons', 'fr').subscribe((result) => {
             result.should.be.a('string');
             result.should.equal('descendre');
+            console.log('original word: descendons');
+            console.log('new word: ', result);
             done();
         });
     });
@@ -147,7 +153,9 @@ describe('Parse tests', () => {
             const result = parse(response, 'bonjour');
             result.should.be.a('Object');
             result.word.should.equal('bonjour');
-            result.categories.should.be.a('array');
+            result.categories.should.be.a('Object');
+            console.log('Entering \'bonjour\' returns: ');
+            console.log(result);
             done();
         });
     });
@@ -170,7 +178,9 @@ describe('Wrapper tests', () => {
         wrapper('pommes', 'fr').subscribe((result) => {
             result.should.be.a('Object');
             result.word.should.equal('pomme');
-            result.categories.should.be.a('array');
+            result.categories.should.be.a('Object');
+            console.log('Entering \'pommes\' returns: ');
+            console.log(result);
             done();
         });
     });
