@@ -67,6 +67,9 @@ describe('Weight By Key Test', () => {
     it('Should return six if words appear twice in the article\'s objective', () => {
         const weight = weightByKey(articles[0], ['protection', 'entretien', 'préservation', 'aménagement'], 'objective');
         weight.should.equal(6);
+        console.log(['protection', 'entretien', 'préservation', 'aménagement']);
+        console.log(articles[0]['objective']);
+        console.log('weight: ', weight);
     });
 });
 
@@ -82,6 +85,9 @@ describe('Total Weight Test', () => {
     it('Should return eleven if words appear once in the name, once in the objective and four times in the description of the article', () => {
         const weight = totalWeight(articles[0], ['entretien', 'préservation', 'construction', 'valorisation']);
         weight.should.equal(11);
+        console.log('words: ', ['entretien', 'préservation', 'construction', 'valorisation']);
+        console.log(articles[0]);
+        console.log('weight: ', weight);
     })
 })
 
@@ -103,6 +109,9 @@ describe('Sort Articles Test', () => {
             const weight2 = totalWeight(sortedArticles[i+1], words);
             (weight2 - weight1).should.be.at.most(0);
         }
+        console.log('words: ', words);
+        console.log(sortedArticles[0]);
+        console.log(sortedArticles[1]);
     });
 });
 

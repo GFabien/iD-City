@@ -2,17 +2,26 @@
   "name": "id_city_node_rest_api",
   "version": "1.0.0",
   "description": "A node rest api searching for words on the Wiktionary API to choose the most relevant articles from a database and returning them",
-  "main": "index.js",
+  "main": "./bin/www",
   "directories": {
     "test": "test"
   },
   "dependencies": {
     "chai": "^4.2.0",
     "chai-rx": "0.0.4",
+    "cookie-parser": "~1.4.3",
+    "cors": "^2.8.4",
+    "debug": "~2.6.9",
+    "express": "~4.16.0",
+    "http-errors": "~1.6.2",
+    "http-status-codes": "^1.3.0",
     "https": "^1.0.0",
+    "lodash": "^4.17.5",
+    "morgan": "~1.9.0",
     "nock": "^10.0.1",
     "rewire": "^4.0.1",
     "rxjs": "^6.3.3",
+    "stopword": "^0.1.13",
     "word-definition": "^2.1.6",
     "xml-js": "^1.6.8"
   },
@@ -21,7 +30,8 @@
     "mocha": "^5.2.0"
   },
   "scripts": {
-    "test": "set TEST=test&& mocha --exit"
+    "test": "set TEST=test&& mocha --exit",
+    "start": "node ./bin/www"
   },
   "repository": {
     "type": "git",
