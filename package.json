@@ -7,6 +7,7 @@
     "test": "test"
   },
   "dependencies": {
+    "cached-request": "^1.1.4",
     "chai": "^4.2.0",
     "chai-rx": "0.0.4",
     "cookie-parser": "~1.4.3",
@@ -19,6 +20,7 @@
     "lodash": "^4.17.5",
     "morgan": "~1.9.0",
     "nock": "^10.0.1",
+    "request": "^2.88.0",
     "rewire": "^4.0.1",
     "rxjs": "^6.3.3",
     "stopword": "^0.1.13",

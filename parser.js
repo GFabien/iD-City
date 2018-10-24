@@ -5,6 +5,16 @@
 const https = require("https");
 const Rx = require('rxjs');
 
+//cache libraries
+var request = require('request')
+,   cachedRequest = require('cached-request')(request)
+,   cacheDirectory = "./tmp/cache";
+ 
+cachedRequest.setCacheDirectory(cacheDirectory);
+cachedRequest.setValue('ttl', 10000); //how long do we keep the cache
+
+
+
 // Useful URL to make requests on the Wiktionary API.
 const titlesURL = ".wiktionary.org/w/api.php?action=query&list=search&format=json&utf8&srprop=&srsearch=";
 const pagesURL = ".wiktionary.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=";
@@ -122,16 +132,16 @@ function getBetterTitle(title, language) {
  */
 function getPage(title, language) {
     const url = `https://${language}${pagesURL}${encodeURIComponent(title)}`;
+    //cache options:
+    let options = {method: 'GET'};
+    options['url']=url;
+    
 
     const obs = Rx.Observable.create(function subscribe(observer) {
-        const req = https.get(url, function(result) {
-            let content = '';
-            result.on('data', function(chunk) {
-                content += chunk;
-            })
-            .on('end', function() {
+        const req = cachedRequest(options, function(error,response, body) {
+            if (!error && response.statusCode == 200) {
                 try {
-                    const pages = JSON.parse(content).query.pages;
+                    const pages = JSON.parse(body).query.pages;
                     const page = pages[Object.keys(pages)[0]].revisions[0]['*'];
                     const languages = page.split(/\n==[^=]/);
                     let relevantPage = languages[0];
@@ -146,7 +156,8 @@ function getPage(title, language) {
                     console.log(err);
                     observer.error(errors.req);
                 }
-            })
+            }
+
         });
 
         req.on("error", function() {
