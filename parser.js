@@ -5,24 +5,11 @@
 const https = require("https");
 const Rx = require('rxjs');
 
-//cache libraries
-var request = require('request')
-,   cachedRequest = require('cached-request')(request)
-,   cacheDirectory = "./tmp/cache";
- 
-cachedRequest.setCacheDirectory(cacheDirectory);
-cachedRequest.setValue('ttl', 10000); //how long do we keep the cache
-
-
-
 // Useful URL to make requests on the Wiktionary API.
 const titlesURL = ".wiktionary.org/w/api.php?action=query&list=search&format=json&utf8&srprop=&srsearch=";
 const pagesURL = ".wiktionary.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=";
 
 const srwhat = 'nearmatch';
-
-// Titles of the sections of the article we are intersted in.
-const relevantHeaders = ['hyponymes', 'troponymes', 'antonymes', 'synonymes', 'quasi-synonymes'];
 
 const errors = {
 	notFound: "not found",
@@ -141,13 +128,19 @@ function getPage(title, language) {
             try {
                 const pages = JSON.parse(content).query.pages;
                 const page = pages[Object.keys(pages)[0]].revisions[0]['*'];
+                
+                //page are either under the form 
+                //1:    {{voir|tèxte|texté}} \n \n== "paragraph language 2" ..."something" \n== "Paragraph language 1" \n== "paragraph language 2" ... 
+                //or
+                //2:    "something" \n== "Paragraph language 1" \n== "paragraph language 2" ... 
+                
+                //while we don't find the fr language, we choose the next paragraph
                 const languages = page.split(/\n==[^=]/);
-                let relevantPage = languages[0];
-                
-                if (relevantPage.length < 20) {     // We keep only the selected language page
-                    relevantPage = languages[1];
-                }
-                
+                let i=0;
+                do {
+                    relevantPage = languages[i];
+                    i+=1;
+                } while (!relevantPage.match(/{{langue\|fr}}/));
                 observer.next(relevantPage);
             }
             catch(err) {
@@ -179,18 +172,26 @@ function parse(page, word,originWord) {
         originWord: originWord
     };
 
+    // Titles of the sections of the article we are intersted in.
+    let relevantHeaders = ['hyponymes', 'troponymes', 'antonymes', 'synonymes', 'quasi-synonymes'];
+
     const sections = page.split('\n====');
     sections.shift();
-
     const headerPattern = /[^|]+(?=}}\s====\n)/;
     const wordPattern = /[^[]+(?=]])/g;
 
+
     sections.forEach(element => {
-        const header = element.match(headerPattern);
-        const words = element.match(wordPattern);
+        const smallerSections=element.split('\n===') // the interesting part is either between \n==== and the next \n==== or \n===
+        const header = smallerSections[0].match(headerPattern);
+        console.log('header');
+        console.log(header);
+        const words = smallerSections[0].match(wordPattern);
         if (header && words && relevantHeaders.includes(header[0])) {
             //result will have the following form: {word:...,originWord:..., synonymes: list of words,troponyme:list of words,...}
             result[header[0]]=words;
+            //allow only one list for each relevantHeader
+            relevantHeaders.splice( relevantHeaders.indexOf(header[0]), 1 );
         }
     });
 
