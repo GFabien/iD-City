@@ -8,6 +8,8 @@ sw = require('stopword');
 const HttpStatus = require('http-status-codes');
 var router = express.Router();
 var Cache = require('ttl');
+
+//paramètres du cache
 var cache = new Cache({
     ttl: 100 * 1000,
     capacity: 10
