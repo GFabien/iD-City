@@ -83,31 +83,26 @@ function getBetterTitle(title, language) {
                 try {
                     const pages = JSON.parse(content).query.pages;
                     const page = pages[Object.keys(pages)[0]].revisions[0]['*'];
-                    const isOk=/{{S\|synonymes}}/.exec(page);
-                    if(isOk){
-                        observer.next(title);
-                    }
-                    else{
+                    const isAlreadyBest=/{{S\|synonymes}}/.exec(page);
+                    let betterTitle=title;
+                    if(!isAlreadyBest){
                         const isName = /{{S\|nom\|fr\|flexion}}/.exec(page);
                         const isAdjective = /{{S\|adjectif\|fr\|flexion}}/.exec(page);
                         const isVerb = /{{S\|verbe\|fr\|flexion}}/.exec(page);
                         if (isName && (!isAdjective || isName.index < isAdjective.index) && (!isVerb || isName.index < isVerb.index)) {   // On suppose ici qu'on est en français
                             // Find xxxx in ...|s=xxxx}}
-                            observer.next(/\|s=([a-z]*)/.exec(page)[1]);
+                            betterTitle=(/\|s=([a-z]*)/.exec(page)[1]);
                         }
                         else if (isAdjective && (!isVerb || isAdjective.index < isVerb.index)) {
                             // Find xxxx in [[xxxx#fr-yy|xxxx]]
-                            observer.next(/\[\[([a-z]*)/.exec(page)[1]);
+                            betterTitle=(/\[\[([a-z]*)/.exec(page)[1]);
                         }
                         else if (isVerb) {
                             // Find xxxx in {{fr-verbe-flexion|(grp=3)|xxxx|
-                            observer.next(/{{fr-verbe-flexion\|(grp=3\|)?([a-z]*)\|/.exec(page)[2]);
-                        }
-                        else {
-                            observer.next(title);
+                            betterTitle=(/{{fr-verbe-flexion\|(grp=3\|)?([a-z]*)\|/.exec(page)[2]);
                         }
                     }
-
+                    observer.next(betterTitle);
                 }
                 catch(err) {
                     console.log(err);
@@ -135,69 +130,69 @@ function getPage(title, language) {
     //cache options:
     let options = {method: 'GET'};
     options['url']=url;
-    
-       const obs = Rx.Observable.create(function subscribe(observer) {
-        const req = https.get(url, function(result) {
-            let content = '';
-            result.on('data', function(chunk) {
-                content += chunk;
-            })
-            .on('end', function() {
-                try {
-                    const pages = JSON.parse(content).query.pages;
-                    const page = pages[Object.keys(pages)[0]].revisions[0]['*'];
-                    const languages = page.split(/\n==[^=]/);
-                    let relevantPage = languages[0];
-                    
-                    if (relevantPage.length < 20) {     // We keep only the selected language page
-                        relevantPage = languages[1];
-                    }
-                    
-                    observer.next(relevantPage);
-                }
-                catch(err) {
-                    console.log(err);
-                    observer.error(errors.req);
-                }
-            })
-        });
 
-
-        req.on("error", function() {
-            observer.error(Error("error")); 
-        });
+    const obs = Rx.Observable.create(function subscribe(observer) {
+    const req = https.get(url, function(result) {
+        let content = '';
+        result.on('data', function(chunk) {
+            content += chunk;
+        })
+        .on('end', function() {
+            try {
+                const pages = JSON.parse(content).query.pages;
+                const page = pages[Object.keys(pages)[0]].revisions[0]['*'];
+                const languages = page.split(/\n==[^=]/);
+                let relevantPage = languages[0];
+                
+                if (relevantPage.length < 20) {     // We keep only the selected language page
+                    relevantPage = languages[1];
+                }
+                
+                observer.next(relevantPage);
+            }
+            catch(err) {
+                console.log(err);
+                observer.error(errors.req);
+            }
+        })
     });
 
-    return obs;        
+
+    req.on("error", function() {
+        observer.error(Error("error")); 
+    });
+});
+
+return obs;        
 }
 
 /** Private function to parse the content of the page we got to turn it into a javascript object.
  * @param {string} page - The page we got and we want to parse.
  * @param {string} word - The word we want to find semantic correspondance with.
+ * @param {string} originWord - the original word requested.
  * @return {Object} - An object with attributes word and categories. Word is the word we gave to the function and categories are arrays that contain objects with attributes header and words. This array might be empty.
  */
-function parse(page, word) {
+function parse(page, word,originWord) {
+    
+    const result = {
+        word: word,
+        originWord: originWord
+    };
+
     const sections = page.split('\n====');
     sections.shift();
 
     const headerPattern = /[^|]+(?=}}\s====\n)/;
     const wordPattern = /[^[]+(?=]])/g;
 
-    const categories = {};
     sections.forEach(element => {
         const header = element.match(headerPattern);
         const words = element.match(wordPattern);
         if (header && words && relevantHeaders.includes(header[0])) {
-            //choose categorie will have the following form: {{synonymes: list of words},{troponyme:list of words}}
-            categories[header[0]]=words;
+            //result will have the following form: {word:...,originWord:..., synonymes: list of words,troponyme:list of words,...}
+            result[header[0]]=words;
         }
-        
     });
-
-    const result = {
-        word: word,
-        categories: categories
-    };
 
     return result;
 }
@@ -216,7 +211,7 @@ function wrapper(word, language) {
         getTitle(word, language).subscribe((title) => {
             getBetterTitle(title, language).subscribe((newTitle) => {
                 getPage(newTitle, language).subscribe((page) => {
-                    observer.next(parse(page, newTitle));
+                    observer.next(parse(page, newTitle, word));
                 },
                 () => {
                     observer.next(defaultResult);

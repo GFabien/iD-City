@@ -68,9 +68,7 @@ router.post('/', function(req, res, next) {
         .subscribe(
             function (x) {
                 if(x.word){
-                    cache.put(x.word,x);
-                    console.log('addcache')
-                    console.log(x.word)
+                    cache.put(x.originWord,x);
                 }
                 finalResult.push(x);          
             },
