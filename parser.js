@@ -136,12 +136,15 @@ function getPage(title, language) {
     let options = {method: 'GET'};
     options['url']=url;
     
-
-    const obs = Rx.Observable.create(function subscribe(observer) {
-        const req = cachedRequest(options, function(error,response, body) {
-            if (!error && response.statusCode == 200) {
+       const obs = Rx.Observable.create(function subscribe(observer) {
+        const req = https.get(url, function(result) {
+            let content = '';
+            result.on('data', function(chunk) {
+                content += chunk;
+            })
+            .on('end', function() {
                 try {
-                    const pages = JSON.parse(body).query.pages;
+                    const pages = JSON.parse(content).query.pages;
                     const page = pages[Object.keys(pages)[0]].revisions[0]['*'];
                     const languages = page.split(/\n==[^=]/);
                     let relevantPage = languages[0];
@@ -156,9 +159,9 @@ function getPage(title, language) {
                     console.log(err);
                     observer.error(errors.req);
                 }
-            }
-
+            })
         });
+
 
         req.on("error", function() {
             observer.error(Error("error")); 
@@ -207,8 +210,7 @@ function parse(page, word) {
  */
 function wrapper(word, language) {
     const defaultResult = {
-        word: word,
-        categories: []
+        word: word    
     }
     const obs = Rx.Observable.create(function subscribe(observer) {
         getTitle(word, language).subscribe((title) => {

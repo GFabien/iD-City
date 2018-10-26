@@ -3,10 +3,15 @@ const articles = require('../pick-articles');
 const sortArticles = require('../sort-articles');
 var express = require('express');
 const Rx = require('rxjs');
-const { expand,take } = require('rxjs/operators');
+const { expand,take,mergeMap,filter } = require('rxjs/operators');
 sw = require('stopword');
 const HttpStatus = require('http-status-codes');
 var router = express.Router();
+var Cache = require('ttl');
+var cache = new Cache({
+    ttl: 100 * 1000,
+    capacity: 10
+});
 
 //GET search bar
 router.get('/', function(req, res, next) {
@@ -37,6 +42,7 @@ router.post('/', function(req, res, next) {
     const raw_req_words = req.body.words;
     const split_character='|';
     const list_raw_req_words=raw_req_words.split(split_character)
+    
     let list_req_words=sw.removeStopwords(list_raw_req_words,sw.fr); //remove useless words
     list_req_words=list_req_words.filter(function(elem, index, self) { //remove repeated words
         return index === self.indexOf(elem);
@@ -45,23 +51,35 @@ router.post('/', function(req, res, next) {
     //get similar words
     const finalResult = [];
     Rx  .from(list_req_words)
-        .pipe(expand(function(word){ 
-            return(parser(word, 'fr')); //relevant words {word:..., categorie:{synonymes : ...,troponymes : ...}}
+        .pipe(
+            mergeMap((word) => {
+                if (cache.get(word)){
+                    console.log('cache:');
+                    return(new Promise(function(resolve, reject) {resolve(cache.get(word))}));
+                }
+                else{
+                    console.log('parser:');
+                    console.log(word)
+                    return(parser(word, 'fr')); //relevant words {word:..., categorie:{synonymes : ...,troponymes : ...}}
+                }
             }),
-            take(list_req_words.length*2) //number of repetitions before completion
-            )
+            take(list_req_words.length)
+        )
         .subscribe(
             function (x) {
-                finalResult.push(x);
-                console.log('Next: ' , finalResult);
+                if(x.word){
+                    cache.put(x.word,x);
+                    console.log('addcache')
+                    console.log(x.word)
+                }
+                finalResult.push(x);          
             },
             function (err) {
                 console.log('Error: ' + err);   
             },
             function () {//send relevant words when completed
-                finalResult.splice(0,list_req_words.length);
                 console.log('Completed');
-                console.log(finalResult)   
+                console.log(finalResult);
                 res.status(HttpStatus.OK).send({relevantWords: finalResult});  
             });
 });
