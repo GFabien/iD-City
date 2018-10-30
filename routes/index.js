@@ -37,6 +37,7 @@ router.get('/', function (req, res, next) {
     });
 
 });
+
 //POST entry form 
 router.post('/', function(req, res, next) {
     //get request words
@@ -54,13 +55,14 @@ router.post('/', function(req, res, next) {
     Rx  .from(list_req_words)
         .pipe(
             mergeMap((word) => {
-                if (cache.get(word)){
+                const cacheContent=cache.get(word);
+                console.log(cacheContent);
+                if (cacheContent){
                     console.log('cache:');
-                    return(new Promise(function(resolve, reject) {resolve(cache.get(word))}));
+                    return(new Promise(function(resolve, reject) {resolve(cacheContent)}));
                 }
                 else{
                     console.log('parser:');
-                    console.log(word)
                     return(parser(word, 'fr')); //relevant words {word:..., categorie:{synonymes : ...,troponymes : ...}}
                 }
             }),
@@ -68,8 +70,8 @@ router.post('/', function(req, res, next) {
         )
         .subscribe(
             function (x) {
-                if(x.word){
-                    cache.put(x.originWord,x);
+                if(x.originWord){
+                    cache.put(x.originWord[0],x);
                 }
                 finalResult.push(x);          
             },

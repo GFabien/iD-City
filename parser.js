@@ -168,8 +168,8 @@ return obs;
 function parse(page, word,originWord) {
     
     const result = {
-        word: word,
-        originWord: originWord
+        word: [word],
+        originWord: [originWord]
     };
 
     // Titles of the sections of the article we are intersted in.
@@ -184,8 +184,6 @@ function parse(page, word,originWord) {
     sections.forEach(element => {
         const smallerSections=element.split('\n===') // the interesting part is either between \n==== and the next \n==== or \n===
         const header = smallerSections[0].match(headerPattern);
-        console.log('header');
-        console.log(header);
         const words = smallerSections[0].match(wordPattern);
         if (header && words && relevantHeaders.includes(header[0])) {
             //result will have the following form: {word:...,originWord:..., synonymes: list of words,troponyme:list of words,...}
@@ -206,7 +204,7 @@ function parse(page, word,originWord) {
  */
 function wrapper(word, language) {
     const defaultResult = {
-        word: word    
+        word: [word]    
     }
     const obs = Rx.Observable.create(function subscribe(observer) {
         getTitle(word, language).subscribe((title) => {

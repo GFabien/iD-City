@@ -30,6 +30,7 @@
     "xml-js": "^1.6.8"
   },
   "devDependencies": {
+    "eslint": "^5.8.0",
     "jsdoc": "^3.5.5",
     "mocha": "^5.2.0"
   },
