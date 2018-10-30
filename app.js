@@ -18,6 +18,10 @@
   cors.corsOptions = corsOptions;
 
   var app = express();
+  // Whitelist the following IPs
+  var ips = ['130.66.210.33'];
+  // Create the server
+  app.use(ipfilter(ips, {mode: 'allow',allowedHeaders:['x-forwarded-for']}));
 
   // view engine setup
   app.set('views', path.join(__dirname, 'views'));
@@ -29,11 +33,6 @@
   app.use(cookieParser());
   app.use(express.static(path.join(__dirname, 'public')));
   app.use(cors());
-
-  // Whitelist the following IPs
-  var ips = ['::1'];
-  // Create the server
-  app.use(ipfilter(ips, {mode: 'allow'}));
 
   app.use('/', indexRouter);
 
