@@ -5,13 +5,10 @@ const { take,mergeMap } = require('rxjs/operators');
 sw = require('stopword');
 const HttpStatus = require('http-status-codes');
 var router = express.Router();
-var Cache = require('ttl');
+const CacheService = require('../cache.service');
 
-//paramètres du cache
-var cache = new Cache({
-    ttl: 100 * 1000,
-    capacity: 10
-});
+const ttl = 60 * 60 * 1; // cache for 1 Hour
+const cache = new CacheService(ttl); // Create a new cache service instance
 
 //GET search bar
 router.get('/', function (req, res, next) {
@@ -56,7 +53,6 @@ router.post('/', function(req, res, next) {
         .pipe(
             mergeMap((word) => {
                 const cacheContent=cache.get(word);
-                console.log(cacheContent);
                 if (cacheContent){
                     console.log('cache:');
                     return(new Promise(function(resolve, reject) {resolve(cacheContent)}));
@@ -70,8 +66,8 @@ router.post('/', function(req, res, next) {
         )
         .subscribe(
             function (x) {
-                if(x.originWord){
-                    cache.put(x.originWord[0],x);
+                if(x.originWord[0]){
+                    cache.set(x.originWord[0],x);
                 }
                 finalResult.push(x);          
             },
@@ -80,7 +76,7 @@ router.post('/', function(req, res, next) {
             },
             function () {//send relevant words when completed
                 console.log('Completed');
-                console.log(finalResult);
+                console.log('cache Stats:',cache.getStats());                
                 res.status(HttpStatus.OK).send({relevantWords: finalResult});  
             });
 });
