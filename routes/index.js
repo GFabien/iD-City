@@ -1,12 +1,12 @@
 const parser = require('../parser');
 var express = require('express');
+var router = express.Router();
+const HttpStatus = require('http-status-codes');
 const Rx = require('rxjs');
 const { take,mergeMap } = require('rxjs/operators');
-sw = require('stopword');
-const HttpStatus = require('http-status-codes');
-var router = express.Router();
-const CacheService = require('../cache.service');
+const sw = require('stopword');
 
+const CacheService = require('../cache.service');
 const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
 
