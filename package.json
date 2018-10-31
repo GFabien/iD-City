@@ -10,6 +10,7 @@
     "cached-request": "^1.1.4",
     "chai": "^4.2.0",
     "chai-rx": "0.0.4",
+    "chokidar": "^2.0.4",
     "cookie-parser": "~1.4.3",
     "cors": "^2.8.4",
     "debug": "~2.6.9",
