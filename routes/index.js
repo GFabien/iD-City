@@ -53,7 +53,7 @@ router.post('/', function(req, res, next) {
     Rx  .from(list_req_words)
         .pipe(
             mergeMap((word) => {
-                const cacheContent=cache.get(word);
+                const cacheContent=cache.get(word); //return null if don't find a word in the cache
                 if (cacheContent){
                     console.log('cache:');
                     return(new Promise(function(resolve, reject) {resolve(cacheContent)}));
@@ -63,7 +63,7 @@ router.post('/', function(req, res, next) {
                     return(parser(word, 'fr')); //relevant words {word:..., categorie:{synonymes : ...,troponymes : ...}}
                 }
             }),
-            take(list_req_words.length)
+            take(list_req_words.length) //call function() when mergeMap completed
         )
         .subscribe(
             function (x) {
