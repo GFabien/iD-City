@@ -56,11 +56,11 @@ router.post('/', function(req, res, next) {
                 const cacheContent=cache.get(word); //return null if don't find a word in the cache
                 if (cacheContent){
                     console.log('cache:');
-                    return(new Promise(function(resolve, reject) {resolve(cacheContent)}));
+                    return(new Promise(function(resolve, reject) {resolve(cacheContent)})); //send cache
                 }
                 else{
                     console.log('parser:');
-                    return(parser(word, 'fr')); //relevant words {word:..., categorie:{synonymes : ...,troponymes : ...}}
+                    return(parser(word, 'fr')); //send wiki relevant words {word:..., synonymes : ..., troponymes : ...}
                 }
             }),
             take(list_req_words.length) //call function() when mergeMap completed
