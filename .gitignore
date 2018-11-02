@@ -24,11 +24,12 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# cache
-/tmp
+# whitelist
+/config
 
 #beautify
 .jsbeautifyrc
 
 #ssl authentication
 /ssl
+

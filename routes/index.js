@@ -67,7 +67,7 @@ router.post('/', function(req, res, next) {
         )
         .subscribe(
             function (x) {
-                if(x.originWord[0]){
+                if(x.originWord){
                     cache.set(x.originWord[0],x);
                 }
                 finalResult.push(x);          
