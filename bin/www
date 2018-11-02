@@ -6,7 +6,7 @@
 
 var app = require('../app');
 var debug = require('debug')('rest-api:server');
-var http = require('http');
+var https = require('https');
 
 /**
  * Get port from environment and store in Express.
@@ -16,10 +16,16 @@ var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 /**
- * Create HTTP server.
+ * Create HTTPS server.
  */
 
-var server = http.createServer(app);
+const options = {
+	key: fs.readFileSync('./ssl/server.key'),
+	cert: fs.readFileSync('./ssl/server.crt')
+  };
+  
+
+var server = https.createServer(httpsOptions, app);
 
 /**
  * Listen on provided port, on all network interfaces.
