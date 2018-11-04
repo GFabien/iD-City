@@ -12,7 +12,7 @@ const sw = require('stopword');
 //Cache Service
 const CacheService = require('../cache.service');
 const ttl = 60 * 60 * 1; // cache for 1 Hour
-const Maxmemory = 500; //cache for 500 Mb 
+const Maxmemory = 50; //cache for 50 Mb 
 const cache = new CacheService(ttl, Maxmemory); // Create a new cache service instance
 
 //GET search bar
