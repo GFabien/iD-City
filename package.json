@@ -26,6 +26,7 @@
     "nock": "^10.0.1",
     "node-cache": "^4.2.0",
     "path": "^0.12.7",
+    "performance-now": "^2.1.0",
     "request": "^2.88.0",
     "rewire": "^4.0.1",
     "rx": "^4.1.0",
