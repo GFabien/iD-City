@@ -19,38 +19,38 @@ cors.corsOptions = corsOptions;
 var app = express();
 
 // Whitelisting IPs
-	// Initialize ipfilter
-	var ipfilter = require('express-ipfilter').IpFilter;
-	const ipfilteroptions = {
-		mode: 'allow',
-		allowedHeaders: ['x-forwarded-for']
-	};
+// Initialize ipfilter
+var ipfilter = require('express-ipfilter').IpFilter;
+const ipfilteroptions = {
+    mode: 'allow',
+    allowedHeaders: ['x-forwarded-for']
+};
 
-	// Read whitelist file
-	let contents = fs.readFileSync("./config/whitelist.json");
-	let ips = JSON.parse(contents).ips;
+// Read whitelist file
+let contents = fs.readFileSync("./config/whitelist.json");
+let ips = JSON.parse(contents).ips;
 
-	// Watch for whitelist change
-	const chokidar = require('chokidar');
-	const watcher = chokidar.watch('./config/whitelist.json')
+// Watch for whitelist change
+const chokidar = require('chokidar');
+const watcher = chokidar.watch('./config/whitelist.json')
 
-	// if whitelist is changed, variable whitelistchanged take the value true
-	let whitelistchanged = false;
-	watcher.on('change', (path) => {
-		whitelistchanged = true;
-		console.log(`File ${path} changed | whitelistchanged: `, whitelistchanged);
-	});
+// if whitelist is changed, variable whitelistchanged take the value true
+let whitelistchanged = false;
+watcher.on('change', (path) => {
+    whitelistchanged = true;
+    console.log(`File ${path} changed | whitelistchanged: `, whitelistchanged);
+});
 
-	//function to get Ips
-	getIps = function() {
-		if (whitelistchanged) {
-			console.log('reload whitelist');
-			contents = fs.readFileSync("./config/whitelist.json");
-			ips = JSON.parse(contents).ips;
-			whitelistchanged = false;
-		}
-		return (ips);
-	};
+//function to get Ips
+getIps = function() {
+    if (whitelistchanged) {
+        console.log('reload whitelist');
+        contents = fs.readFileSync("./config/whitelist.json");
+        ips = JSON.parse(contents).ips;
+        whitelistchanged = false;
+    }
+    return (ips);
+};
 
 app.use(ipfilter(getIps, ipfilteroptions));
 
