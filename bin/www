@@ -6,6 +6,7 @@
 
 var app = require('../app');
 var debug = require('debug')('rest-api:server');
+var http = require('http');
 var https = require('https');
 var fs = require('fs')
 
@@ -26,7 +27,8 @@ const httpsOptions = {
   };
   
 
-var server = https.createServer(httpsOptions, app);
+// var server = https.createServer(httpsOptions, app);
+var server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
