@@ -29,7 +29,6 @@ const errors = {
  */
 function getTitle(word, language) {
     const url = `https://${language}${titlesURL}${encodeURIComponent(word)}&srwhat=${srwhat}`;
-
     const obs = Rx.Observable.create(function subscribe(observer) {
 
         const req = https.get(url, function(result) {
@@ -43,6 +42,8 @@ function getTitle(word, language) {
                         const articles = JSON.parse(content).query.search;
                         if (articles.length) {
                             observer.next(articles[0].title);
+                        } else {
+                            observer.error(Error('getTitle: Page does not exist'));
                         }
                     } catch (err) {
                         observer.error(err);
@@ -63,7 +64,6 @@ function getTitle(word, language) {
  */
 function getBetterTitle(title, language) {
     const url = `https://${language}${pagesURL}${encodeURIComponent(title)}`;
-
     const obs = Rx.Observable.create(function subscribe(observer) {
         const req = https.get(url, function(result) {
             let content = '';
@@ -73,25 +73,30 @@ function getBetterTitle(title, language) {
                 .on('end', function() {
                     try {
                         const pages = JSON.parse(content).query.pages;
-                        const page = pages[Object.keys(pages)[0]].revisions[0]['*'];
-                        const isAlreadyBest = /{{S\|synonymes}}/.exec(page);
-                        let betterTitle = title;
-                        if (!isAlreadyBest) {
-                            const isName = /{{S\|nom\|fr\|flexion}}/.exec(page);
-                            const isAdjective = /{{S\|adjectif\|fr\|flexion}}/.exec(page);
-                            const isVerb = /{{S\|verbe\|fr\|flexion}}/.exec(page);
-                            if (isName && (!isAdjective || isName.index < isAdjective.index) && (!isVerb || isName.index < isVerb.index)) { // On suppose ici qu'on est en français
-                                // Find xxxx in ...|s=xxxx}}
-                                betterTitle = (/\|s=([a-z]*)/.exec(page)[1]);
-                            } else if (isAdjective && (!isVerb || isAdjective.index < isVerb.index)) {
-                                // Find xxxx in [[xxxx#fr-yy|xxxx]]
-                                betterTitle = (/\[\[([a-z]*)/.exec(page)[1]);
-                            } else if (isVerb) {
-                                // Find xxxx in {{fr-verbe-flexion|(grp=3)|xxxx|
-                                betterTitle = (/{{fr-verbe-flexion\|(grp=3\|)?([a-z]*)\|/.exec(page)[2]);
+                        const pageId = Object.keys(pages)[0];
+                        if (pageId !== '-1') {
+                            const page = pages[pageId].revisions[0]['*'];
+                            const isAlreadyBest = /{{S\|synonymes}}/.exec(page);
+                            let betterTitle = title;
+                            if (!isAlreadyBest) {
+                                const isName = /{{S\|nom\|fr\|flexion}}/.exec(page);
+                                const isAdjective = /{{S\|adjectif\|fr\|flexion}}/.exec(page);
+                                const isVerb = /{{S\|verbe\|fr\|flexion}}/.exec(page);
+                                if (isName && (!isAdjective || isName.index < isAdjective.index) && (!isVerb || isName.index < isVerb.index)) { // On suppose ici qu'on est en français
+                                    // Find xxxx in ...|s=xxxx}}
+                                    betterTitle = (/\|s=([a-z]*)/.exec(page)[1]);
+                                } else if (isAdjective && (!isVerb || isAdjective.index < isVerb.index)) {
+                                    // Find xxxx in [[xxxx#fr-yy|xxxx]]
+                                    betterTitle = (/\[\[([a-z]*)/.exec(page)[1]);
+                                } else if (isVerb) {
+                                    // Find xxxx in {{fr-verbe-flexion|(grp=3)|xxxx|
+                                    betterTitle = (/{{fr-verbe-flexion\|(grp=3\|)?([a-z]*)\|/.exec(page)[2]);
+                                }
                             }
+                            observer.next(betterTitle);
+                        } else {
+                            observer.error(Error('getBetterTitle: Page does not exist'));
                         }
-                        observer.next(betterTitle);
                     } catch (err) {
                         console.log(err);
                         observer.error(errors.req);
@@ -130,21 +135,26 @@ function getPage(title, language) {
                 .on('end', function() {
                     try {
                         const pages = JSON.parse(content).query.pages;
-                        const page = pages[Object.keys(pages)[0]].revisions[0]['*'];
+                        pageId = Object.keys(pages)[0];
+                        if (pageId !== '-1') {
+                            const page = pages[pageId].revisions[0]['*'];
 
-                        //page are either under the form 
-                        //1:    {{voir|tèxte|texté}} \n \n== "paragraph language 2" ..."something" \n== "Paragraph language 1" \n== "paragraph language 2" ... 
-                        //or
-                        //2:    "something" \n== "Paragraph language 1" \n== "paragraph language 2" ... 
+                            //page are either under the form 
+                            //1:    {{voir|tèxte|texté}} \n \n== "paragraph language 2" ..."something" \n== "Paragraph language 1" \n== "paragraph language 2" ... 
+                            //or
+                            //2:    "something" \n== "Paragraph language 1" \n== "paragraph language 2" ... 
 
-                        //while we don't find the fr language, we choose the next paragraph
-                        const languages = page.split(/\n==[^=]/);
-                        let i = 0;
-                        do {
-                            relevantPage = languages[i];
-                            i += 1;
-                        } while (!relevantPage.match(/{{langue\|fr}}/));
-                        observer.next(relevantPage);
+                            //while we don't find the fr language, we choose the next paragraph
+                            const languages = page.split(/\n==[^=]/);
+                            let i = 0;
+                            do {
+                                relevantPage = languages[i];
+                                i += 1;
+                            } while (!relevantPage.match(/{{langue\|fr}}/));
+                            observer.next(relevantPage);
+                        } else {
+                            observer.error(Error('getPage: Page does not exist'))
+                        }
                     } catch (err) {
                         console.log(err);
                         observer.error(errors.req);
@@ -222,7 +232,7 @@ function wrapper(word, language) {
                         observer.next(defaultResult);
                     });
             },
-            (err) => {
+            () => {
                 observer.next(defaultResult);
             });
     });
