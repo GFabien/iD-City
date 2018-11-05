@@ -2,6 +2,7 @@
  * @file Export an express API app
  */
 
+//Include Libraries
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -10,19 +11,12 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 let fs = require("fs");
 
-// Declare cors (see npm cors)
-const cors = require('cors');
-// Configuring cors to make the back accessible from our front
-const corsOptions = {
-    origin: '*',
-    opitonsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-}
-cors.corsOptions = corsOptions;
 
 //launching express
 var app = express();
 
-// Whitelisting IPs
+
+////////////Whitelisting IPs////////////
 // Initialize ipfilter
 var ipfilter = require('express-ipfilter').IpFilter;
 const ipfilteroptions = {
@@ -30,22 +24,20 @@ const ipfilteroptions = {
     allowedHeaders: ['x-forwarded-for']
 };
 
-// Read whitelist file
+// Read whitelist file at server start
 let contents = fs.readFileSync("./config/whitelist.json");
 let ips = JSON.parse(contents).ips;
 
-// Watch for whitelist change
+// If whitelist is changed, variable whitelistchanged take the value true
 const chokidar = require('chokidar');
 const watcher = chokidar.watch('./config/whitelist.json')
-
-// if whitelist is changed, variable whitelistchanged take the value true
 let whitelistchanged = false;
 watcher.on('change', (path) => {
     whitelistchanged = true;
     console.log(`File ${path} changed | whitelistchanged: `, whitelistchanged);
 });
 
-//function to get Ips
+//Get Ips --> if whitelist.json is changed the ips whitelist is reloaded else we return the same whitelist
 getIps = function() {
     if (whitelistchanged) {
         console.log('reload whitelist');
@@ -55,28 +47,40 @@ getIps = function() {
     }
     return (ips);
 };
-
 app.use(ipfilter(getIps, ipfilteroptions));
+////////////end whitelisting ip////////////
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+
+//other middleware setup
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({
     extended: false
 }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use('/', indexRouter);
+
+
+// Use cors
+const cors = require('cors');
+const corsOptions = {
+    origin: '*',
+    opitonsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+cors.corsOptions = corsOptions;
 app.use(cors());
 
-app.use('/', indexRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
     next(createError(404));
 });
+
 
 // error handler
 app.use(function(err, req, res, next) {
@@ -88,5 +92,6 @@ app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.render('error');
 });
+
 
 module.exports = app;
