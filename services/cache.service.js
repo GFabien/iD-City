@@ -1,7 +1,18 @@
 const NodeCache = require('node-cache');
 
-/** Class representing a cache service for the api. */
+/** 
+ * @file Create a cache service for the API based on the node-cache library
+ */
+
+/** A cache service based on the node-cache library*/
 class Cache {
+
+    /**
+     * Callback function for cache service
+     * @callback cacheCallback
+     * @param {err} error - error returned on failure 
+     * @param {*} value - value returned on success 
+     */
 
     /**
      * Create a cache instance.
@@ -18,9 +29,8 @@ class Cache {
 
     /**
      * Gets a cached value from a key.
-     * @param {string} key - The key
-     * @return {undefined} If not found or expired
-     * @return {stored value type} Value linked to the key
+     * @param {string|number} key - The key
+     * @return {string|json|array} Value linked to the key
      */
     get(key) {
         return (this.cache.get(key));
@@ -28,8 +38,8 @@ class Cache {
 
     /**
      * Sets a key value pair a cached value from a key if memory isn't full.
-     * @param {key Type} key - The key
-     * @param {element Type} value - The value to cache
+     * @param {string|number} key - The key
+     * @param {string|json|array} value - The value to cache
      * @return {bool} true on success
      */
     set(key, value) {
@@ -43,7 +53,7 @@ class Cache {
 
     /**
      * Deletes a key
-     * @param {key Type} key - The key to delete
+     * @param {string|number|array} keys - The keys to delete
      * @return {number} the number of deleted entries
      */
     del(keys) {
@@ -64,9 +74,16 @@ class Cache {
         return (this.cache.getStats());
     }
 
-    keys(fn) {
-        if (typeof fn === 'function') {
-            return (this.cache.keys(fn)); //async with a callback function(err, mykeys)
+
+    /**
+     * Returns the list of keys contained in the cache.
+     * @param {cacheCallback} [callback] - A callback function
+     * @return {array} The list of keys contained in the cache
+     */
+
+    keys(callback) {
+        if (typeof callback === 'function') {
+            return (this.cache.keys(callback)); //async with a callback function(err, mykeys)
         } else {
             return (this.cache.keys()); //sync
         }
