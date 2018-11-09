@@ -146,11 +146,11 @@ function getPage(title, language) {
 
                             //while we don't find the fr language, we choose the next paragraph
                             const languages = page.split(/\n==[^=]/);
-                            let i = 0;
+                            var i = 0;
                             do {
                                 relevantPage = languages[i];
                                 i += 1;
-                            } while (!relevantPage.match(/{{langue\|fr}}/));
+                            } while (!relevantPage.match(/{{langue\|fr}}/) && i !== languages.length);
                             observer.next(relevantPage);
                         } else {
                             observer.error(Error('getPage: Page does not exist'))
